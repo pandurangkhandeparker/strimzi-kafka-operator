@@ -245,7 +245,7 @@
   zookeeper: 3.6.3
   third-party-libs: 3.4.x
   supported: true
-  default: false
+  default: true
 - version: 3.4.1
   format: 3.4
   protocol: 3.4
@@ -272,4 +272,4 @@
   zookeeper: 3.6.4
   third-party-libs: 3.5.x
   supported: true
-  default: true
+  default: false
