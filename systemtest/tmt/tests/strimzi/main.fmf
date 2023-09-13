@@ -11,6 +11,8 @@ environment:
   CLUSTER_OPERATOR_INSTALL_TYPE: bundle
   PARALLEL_TEST_COUNT: 2
   RERUN_FAILED_TEST_COUNT: 2
+  #set kafka version to 3.4.0 for testing
+  ST_KAFKA_VERSION: "3.4.0"
 adjust:
   - environment+:
       EXCLUDED_TEST_GROUPS: "loadbalancer,arm64unsupported"
