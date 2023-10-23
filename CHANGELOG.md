@@ -2,6 +2,13 @@
 
 ## 0.39.0
 
+* The `KafkaNodePools` feature gate moves to beta stage and is enabled by default.
+  If needed, `KafkaNodePools` can be disabled in the feature gates configuration in the Cluster Operator.
+
+### Changes, deprecations and removals
+
+* Strimzi 0.39.0 (and any of its patch releases) is the last Strimzi version with support for Kubernetes 1.21 and 1.22.
+  From Strimzi 0.40.0 on, we will support only Kubernetes 1.23 and newer.
 
 ## 0.38.0
 
