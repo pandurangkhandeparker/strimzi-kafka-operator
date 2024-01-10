@@ -65,6 +65,7 @@ import java.util.Random;
 import static io.strimzi.systemtest.TestConstants.CO_NAMESPACE;
 import static io.strimzi.systemtest.TestConstants.DEFAULT_SINK_FILE_PATH;
 import static io.strimzi.systemtest.TestConstants.PATH_TO_KAFKA_TOPIC_CONFIG;
+import static io.strimzi.systemtest.TestConstants.PATH_TO_PACKAGING;
 import static io.strimzi.systemtest.TestConstants.PATH_TO_PACKAGING_EXAMPLES;
 import static io.strimzi.test.k8s.KubeClusterResource.cmdKubeClient;
 import static io.strimzi.test.k8s.KubeClusterResource.kubeClient;
@@ -92,11 +93,11 @@ public class AbstractUpgradeST extends AbstractST {
     protected Map<String, String> coPods;
     protected Map<String, String> connectPods;
 
-    protected final LabelSelector kafkaSelector = KafkaResource.getLabelSelector(clusterName, KafkaResources.kafkaStatefulSetName(clusterName));
-    protected final LabelSelector zkSelector = KafkaResource.getLabelSelector(clusterName, KafkaResources.zookeeperStatefulSetName(clusterName));
+    protected final LabelSelector kafkaSelector = KafkaResource.getLabelSelector(clusterName, KafkaResources.kafkaComponentName(clusterName));
+    protected final LabelSelector zkSelector = KafkaResource.getLabelSelector(clusterName, KafkaResources.zookeeperComponentName(clusterName));
     protected final LabelSelector eoSelector = KafkaResource.getLabelSelector(clusterName, KafkaResources.entityOperatorDeploymentName(clusterName));
     protected final LabelSelector coSelector = new LabelSelectorBuilder().withMatchLabels(Map.of(Labels.STRIMZI_KIND_LABEL, "cluster-operator")).build();
-    protected final LabelSelector connectLabelSelector = KafkaConnectResource.getLabelSelector(clusterName, KafkaConnectResources.deploymentName(clusterName));
+    protected final LabelSelector connectLabelSelector = KafkaConnectResource.getLabelSelector(clusterName, KafkaConnectResources.componentName(clusterName));
 
     protected final String topicName = "my-topic";
     protected final String userName = "my-user";
@@ -148,23 +149,23 @@ public class AbstractUpgradeST extends AbstractST {
         // #######################################################################
         String examplesPath = "";
         if (versionModificationData.getToUrl().equals("HEAD")) {
-            examplesPath = PATH_TO_PACKAGING_EXAMPLES + "";
+            examplesPath = PATH_TO_PACKAGING;
         } else {
             File dir = FileUtils.downloadAndUnzip(versionModificationData.getToUrl());
-            examplesPath = dir.getAbsolutePath() + "/" + versionModificationData.getToExamples() + "/examples";
+            examplesPath = dir.getAbsolutePath() + "/" + versionModificationData.getToExamples();
         }
 
-        kafkaYaml = new File(examplesPath + "/kafka/kafka-persistent.yaml");
+        kafkaYaml = new File(examplesPath + versionModificationData.getKafkaFilePathAfter());
         LOGGER.info("Deploying Kafka from: {}", kafkaYaml.getPath());
         // Change kafka version of it's empty (null is for remove the version)
         String defaultValueForVersions = kafkaVersionFromCR == null ? null : TestKafkaVersion.getSpecificVersion(kafkaVersionFromCR).messageVersion();
         cmdKubeClient().applyContent(KafkaUtils.changeOrRemoveKafkaConfiguration(kafkaYaml, kafkaVersionFromCR, defaultValueForVersions, defaultValueForVersions));
 
-        kafkaUserYaml = new File(examplesPath + "/user/kafka-user.yaml");
+        kafkaUserYaml = new File(examplesPath + "/examples/user/kafka-user.yaml");
         LOGGER.info("Deploying KafkaUser from: {}", kafkaUserYaml.getPath());
         cmdKubeClient().applyContent(KafkaUserUtils.removeKafkaUserPart(kafkaUserYaml, "authorization"));
 
-        kafkaTopicYaml = new File(examplesPath + "/topic/kafka-topic.yaml");
+        kafkaTopicYaml = new File(examplesPath + "/examples/topic/kafka-topic.yaml");
         LOGGER.info("Deploying KafkaTopic from: {}", kafkaTopicYaml.getPath());
         cmdKubeClient().applyContent(TestUtils.readFile(kafkaTopicYaml));
         // #######################################################################
@@ -463,7 +464,7 @@ public class AbstractUpgradeST extends AbstractST {
                     .endSpec()
                     .build());
             } else {
-                kafkaYaml = new File(dir, upgradeData.getFromExamples() + "/examples/kafka/kafka-persistent.yaml");
+                kafkaYaml = new File(dir, upgradeData.getFromExamples() + upgradeData.getKafkaFilePathBefore());
                 LOGGER.info("Deploying Kafka from: {}", kafkaYaml.getPath());
                 // Change kafka version of it's empty (null is for remove the version)
                 if (upgradeKafkaVersion == null) {
@@ -643,10 +644,10 @@ public class AbstractUpgradeST extends AbstractST {
 
     protected String downloadExamplesAndGetPath(CommonVersionModificationData versionModificationData) throws IOException {
         if (versionModificationData.getToUrl().equals("HEAD")) {
-            return PATH_TO_PACKAGING_EXAMPLES;
+            return PATH_TO_PACKAGING;
         } else {
             File dir = FileUtils.downloadAndUnzip(versionModificationData.getToUrl());
-            return dir.getAbsolutePath() + "/" + versionModificationData.getToExamples() + "/examples";
+            return dir.getAbsolutePath() + "/" + versionModificationData.getToExamples();
         }
     }
 
