@@ -100,7 +100,8 @@ public class SetupClusterOperator {
     private int replicas = 1;
 
     private String testClassName;
-    private String testMethodName;
+    // by default, we expect at least empty method name in order to collect logs correctly
+    private String testMethodName = "";
     private List<RoleBinding> roleBindings;
     private List<Role> roles;
     private List<ClusterRole> clusterRoles;
@@ -364,7 +365,7 @@ public class SetupClusterOperator {
      * which has not been used yet and also approves the installation
      */
     public void upgradeClusterOperator(OlmConfiguration olmConfiguration) {
-        if (kubeClient().listPodsByPrefixInName(ResourceManager.getCoDeploymentName()).size() == 0) {
+        if (kubeClient().listPodsByPrefixInName(ResourceManager.getCoDeploymentName()).isEmpty()) {
             throw new RuntimeException("We can not perform upgrade! Cluster Operator Pod is not present.");
         }
 
@@ -479,7 +480,7 @@ public class SetupClusterOperator {
             if (this.bindingsNamespaces != null) {
                 this.bindingsNamespaces = new ArrayList<>(this.bindingsNamespaces);
             } else {
-                this.bindingsNamespaces = new ArrayList<>(Arrays.asList(bindingsNamespace));
+                this.bindingsNamespaces = new ArrayList<>(Collections.singletonList(bindingsNamespace));
             }
             return self();
         }
@@ -634,10 +635,10 @@ public class SetupClusterOperator {
      */
     public void applyClusterOperatorInstallFiles(String namespace) {
         List<File> operatorFiles = Arrays.stream(new File(CO_INSTALL_DIR).listFiles()).sorted()
-            .filter(File::isFile)
-            .filter(file ->
-                !file.getName().matches(".*(Binding|Deployment)-.*"))
-            .collect(Collectors.toList());
+                .filter(File::isFile)
+                .filter(file ->
+                        !file.getName().matches(".*(Binding|Deployment)-.*"))
+                .toList();
 
         for (File operatorFile : operatorFiles) {
             File createFile = operatorFile;
