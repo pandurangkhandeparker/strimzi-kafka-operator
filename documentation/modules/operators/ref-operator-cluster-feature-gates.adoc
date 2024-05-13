@@ -67,12 +67,13 @@ Configuration options not set in the `KafkaNodePool` resource are inherited from
 
 The `KafkaNodePool` resources use a `strimzi.io/cluster` label to indicate to which Kafka cluster they belong.
 The label must be set to the name of the `Kafka` custom resource.
+The `Kafka` resource configuration must also include the `strimzi.io/node-pools: enabled` annotation, which is required when using node pools.
 
 Examples of the `KafkaNodePool` resources can be found in the xref:config-examples-{context}[example configuration files] provided by Strimzi.
 
 .Downgrading from KafkaNodePools
 
-If your cluster already uses `KafkaNodePool` custom resources, and you wish to downgrade to an older version of Strimzi that does not support them or with the `KafkaNodePools` feature gate disabled, you must first migrate from `KafkaNodePool` custom resources to managing Kafka nodes using only `Kafka` custom resources.
+If your cluster already uses `KafkaNodePool` custom resources, and you wish to downgrade to an older version of Strimzi that does not support them or with the `KafkaNodePools` feature gate disabled, you must first migrate from `KafkaNodePool` custom resources to managing Kafka nodes using only `Kafka` custom resources. For more information, see the instructions for xref:proc-migrating-clusters-node-pools-str[reversing a migration to node pools].
 
 [id='ref-operator-unidirectional-topic-operator-feature-gate-{context}']
 === UnidirectionalTopicOperator feature gate
@@ -102,7 +103,7 @@ Controllers are responsible for coordinating operations and maintaining the clus
 
 To deploy a Kafka cluster in KRaft mode, you must use the `KafkaNodePool` resources.
 For more details and examples, see xref:deploying-kafka-node-pools-{context}[].
-The `Kafka` custom resource using KRaft mode must also have the annotation `strimzi.io/kraft="enabled"`.
+The `Kafka` custom resource using KRaft mode must also have the annotation `strimzi.io/kraft: enabled`.
 
 Currently, the KRaft mode in Strimzi has the following major limitations:
 
@@ -119,7 +120,25 @@ To disable the `UseKRaft` feature gate, specify `-UseKRaft` in the `STRIMZI_FEAT
 Early access feature gates have not yet reached the beta stage, and are disabled by default. 
 An early access feature gate provides an opportunity for assessment before its functionality is permanently incorporated into Strimzi.
 
-Currently, there are no feature gates in alpha stage.
+[id='ref-operator-continue-reconciliation-on-manual-ru-failure-feature-gate-{context}']
+=== ContinueReconciliationOnManualRollingUpdateFailure feature gate
+
+The `ContinueReconciliationOnManualRollingUpdateFailure` feature gate has a default state of _disabled_.
+
+The `ContinueReconciliationOnManualRollingUpdateFailure` feature gate allows the Cluster Operator to continue a reconciliation if the manual rolling update of the operands fails.
+It applies to the following operands that support manual rolling updates using the `strimzi.io/manual-rolling-update` annotation:
+* ZooKeeper
+* Kafka
+* Kafka Connect
+* Kafka MirrorMaker 2
+
+Continuing the reconciliation after the manual rolling update failure allows the operator to recover from various situations that might prevent the manual rolling update from succeeding.
+For example, a missing Persistent Volume Claim (PVC) or Persistent Volume (PV) might cause the manual rolling update to fail.
+But the PVCs and PVs are created only in a later stage of the reconciliation.
+Continuing the reconciliation after the failure would allow to recreate the missing PVC or PV and recover from the failure.
+
+.Enabling the ContinueReconciliationOnManualRollingUpdateFailure feature gate
+To enable the `ContinueReconciliationOnManualRollingUpdateFailure` feature gate, specify `+ContinueReconciliationOnManualRollingUpdateFailure` in the `STRIMZI_FEATURE_GATES` environment variable in the Cluster Operator configuration.
 
 == Enabling feature gates
 
