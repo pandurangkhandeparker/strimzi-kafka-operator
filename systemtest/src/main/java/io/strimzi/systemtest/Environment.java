@@ -205,7 +205,7 @@ public class Environment {
     private static final String ST_CLIENTS_KAFKA_VERSION_DEFAULT = "3.7.0";
     public static final String TEST_CLIENTS_VERSION_DEFAULT = "0.8.0";
     public static final String ST_FILE_PLUGIN_URL_DEFAULT = "https://repo1.maven.org/maven2/org/apache/kafka/connect-file/" + ST_KAFKA_VERSION_DEFAULT + "/connect-file-" + ST_KAFKA_VERSION_DEFAULT + ".jar";
-    public static final String OLM_OPERATOR_VERSION_DEFAULT = "0.40.0";
+    public static final String OLM_OPERATOR_VERSION_DEFAULT = "0.41.0";
 
     public static final String IP_FAMILY_DEFAULT = "ipv4";
     public static final String IP_FAMILY_VERSION_6 = "ipv6";
@@ -299,11 +299,7 @@ public class Environment {
      * @return true if KRaft mode is enabled, otherwise false
      */
     public static boolean isKRaftModeEnabled() {
-        return isKRaftForCOEnabled() && STRIMZI_USE_KRAFT_IN_TESTS;
-    }
-
-    public static boolean isKRaftForCOEnabled() {
-        return !STRIMZI_FEATURE_GATES.contains(TestConstants.DONT_USE_KRAFT_MODE);
+        return STRIMZI_USE_KRAFT_IN_TESTS;
     }
 
     public static boolean isKafkaNodePoolsEnabled() {
