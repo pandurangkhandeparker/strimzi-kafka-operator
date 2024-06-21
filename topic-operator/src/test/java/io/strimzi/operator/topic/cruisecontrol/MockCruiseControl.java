@@ -2,7 +2,7 @@
  * Copyright Strimzi authors.
  * License: Apache License 2.0 (see the file LICENSE or http://apache.org/licenses/LICENSE-2.0.html).
  */
-package io.strimzi.operator.topic;
+package io.strimzi.operator.topic.cruisecontrol;
 
 import io.strimzi.operator.common.CruiseControlUtil;
 import io.strimzi.operator.common.model.cruisecontrol.CruiseControlEndpoints;
@@ -205,7 +205,6 @@ public class MockCruiseControl {
             .respond(
                 HttpResponse.response()
                     .withStatusCode(HttpStatusCode.UNAUTHORIZED_401.code())
-                    .withBody("<html>Unauthorized</html>")
                     .withDelay(TimeUnit.SECONDS, 0));
     }
 
@@ -322,7 +321,6 @@ public class MockCruiseControl {
             .respond(
                 HttpResponse.response()
                     .withStatusCode(HttpStatusCode.UNAUTHORIZED_401.code())
-                    .withBody("<html>Unauthorized</html>")
                     .withDelay(TimeUnit.SECONDS, 0));
     }
 }

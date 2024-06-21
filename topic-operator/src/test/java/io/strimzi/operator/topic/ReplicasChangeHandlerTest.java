@@ -13,8 +13,10 @@ import io.strimzi.certs.Subject;
 import io.strimzi.operator.common.Reconciliation;
 import io.strimzi.operator.common.model.StatusUtils;
 import io.strimzi.operator.common.operator.MockCertManager;
+import io.strimzi.operator.topic.cruisecontrol.MockCruiseControl;
 import io.strimzi.operator.topic.metrics.TopicOperatorMetricsHolder;
 import io.strimzi.operator.topic.metrics.TopicOperatorMetricsProvider;
+import io.strimzi.operator.topic.model.ReconcilableTopic;
 import io.strimzi.test.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -242,12 +244,12 @@ public class ReplicasChangeHandlerTest {
         server.expectTopicConfigRequestUnauthorized(apiUserFile, apiPassFile);
         var pending = buildPendingReconcilableTopics();
         var pendingAndOngoing = handler.requestPendingChanges(pending);
-        assertFailedWithMessage(pendingAndOngoing, "Replicas change failed, Request failed (401)");
+        assertFailedWithMessage(pendingAndOngoing, "Replicas change failed, Request failed (401), Authorization error");
 
         server.expectUserTasksRequestUnauthorized(apiUserFile, apiPassFile);
         var ongoing = buildOngoingReconcilableTopics();
         var completedAndFailed = handler.requestOngoingChanges(ongoing);
-        assertFailedWithMessage(completedAndFailed, "Replicas change failed, Request failed (401)");
+        assertFailedWithMessage(completedAndFailed, "Replicas change failed, Request failed (401), Authorization error");
     }
 
     private static void assertOngoing(List<ReconcilableTopic> input, List<ReconcilableTopic> output) {
