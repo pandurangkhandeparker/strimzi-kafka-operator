@@ -9,6 +9,7 @@
 * Additional OAuth configuration options have been added for 'oauth' authentication on the listener and the client. 
   On the listener `serverBearerTokenLocation` and `userNamePrefix` have been added. 
   On the client `accessTokenLocation`, `clientAssertion`, `clientAssertionLocation`, `clientAssertionType`, and `saslExtensions` have been added.
+* Add support for custom Cruise Control API users
 
 ### Changes, deprecations and removals
 
