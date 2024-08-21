@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.44.0
+
+
 ## 0.43.0
 
 * Add support for Apache Kafka 3.8.0.
@@ -13,6 +16,7 @@
 * Add support for custom Cruise Control API users
 * Update HTTP bridge to latest 0.30.0 release
 * Unregistration of KRaft nodes after scale-down
+* Update Kafka Exporter to [1.8.0](https://github.com/danielqsj/kafka_exporter/releases/tag/v1.8.0) and update the Grafana dashboard to work with it
 
 ### Changes, deprecations and removals
 
